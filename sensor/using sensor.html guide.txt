@@ -1,0 +1,6 @@
+Step using sensor.html :
+1. open in chrome
+2. open inspect
+3. choose other tools
+4. choose sensor
+5. active custom orientation

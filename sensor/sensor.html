@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sensor Data (Accelerometer & Gyroscope)</title>
+</head>
+<body>
+    <h1>Sensor Data (Accelerometer & Gyroscope)</h1>
+    <p id="output">Waiting for sensor data...</p>
+    <script>
+        // Event listener for Accelerometer (DeviceMotionEvent)
+        if (window.DeviceMotionEvent) {
+            window.addEventListener("devicemotion", function(event) {
+                let acceleration = event.accelerationIncludingGravity || event.acceleration; // Gunakan accelerationIncludingGravity jika tersedia
+                
+                // Tambahkan log untuk melihat data akselerasi
+                console.log("Acceleration data: ", acceleration);
+
+                document.getElementById("output").innerHTML = 
+                    "Accelerometer:<br>" + 
+                    "X: " + (acceleration.x || 0) + "<br>" + 
+                    "Y: " + (acceleration.y || 0) + "<br>" + 
+                    "Z: " + (acceleration.z || 0) + "<br>";
+
+                // Send accelerometer data to Node-RED
+                fetch("https://20d8-2a09-bac1-3480-28-00-278-b5.ngrok-free.app/sensor-data", {
+                    method: "POST", // Pastikan ini POST
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        x_acceleration: acceleration.x || 0,
+                        y_acceleration: acceleration.y || 0,
+                        z_acceleration: acceleration.z || 0
+                    })
+                }).catch(error => {
+                    console.error("Error sending accelerometer data:", error);
+                });
+            });
+        } else {
+            document.getElementById("output").innerHTML = "Accelerometer not supported.";
+        }
+
+        // Event listener for Gyroscope (DeviceOrientationEvent)
+        if (window.DeviceOrientationEvent) {
+            window.addEventListener("deviceorientation", function(event) {
+                let alpha = event.alpha || 0; // rotation around Z-axis
+                let beta = event.beta || 0;   // rotation around X-axis
+                let gamma = event.gamma || 0; // rotation around Y-axis
+                document.getElementById("output").innerHTML += 
+                    "Gyroscope:<br>" + 
+                    "Alpha (Z): " + alpha + "<br>" + 
+                    "Beta (X): " + beta + "<br>" + 
+                    "Gamma (Y): " + gamma + "<br>";
+
+                // Send gyroscope data to Node-RED
+                fetch("https://20d8-2a09-bac1-3480-28-00-278-b5.ngrok-free.app/sensor-data", {
+                    method: "POST", // Pastikan ini POST
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        alpha_rotation: alpha,
+                        beta_rotation: beta,
+                        gamma_rotation: gamma
+                    })
+                }).catch(error => {
+                    console.error("Error sending gyroscope data:", error);
+                });
+            });
+        } else {
+            document.getElementById("output").innerHTML += "Gyroscope not supported.";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,3 @@
+Penjelasan Sensor.html :
+1. Menggunakan DeviceMotionEvent dan DeviceOrientationEvent untuk akses sensor accelerometer dan gyroscope di smartphone.
+2. kemudian data yang didapat dikirim ke node red menggunakan api yang sudah disecure menggunak ngrok dalam bentuk JSON.

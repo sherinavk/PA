@@ -1,0 +1,92 @@
+[
+    {
+        "id": "a76e4cb80f3bceb8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "a982d23da24ec71b",
+        "type": "http in",
+        "z": "a76e4cb80f3bceb8",
+        "name": "",
+        "url": "/sensor-data",
+        "method": "post",
+        "upload": true,
+        "swaggerDoc": "",
+        "x": 130,
+        "y": 240,
+        "wires": [
+            [
+                "2a84f37e77d777f8"
+            ]
+        ]
+    },
+    {
+        "id": "aea76074e8801b17",
+        "type": "debug",
+        "z": "a76e4cb80f3bceb8",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": true,
+        "tostatus": true,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "payload",
+        "statusType": "auto",
+        "x": 870,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "2b7953c0f712b5af",
+        "type": "http response",
+        "z": "a76e4cb80f3bceb8",
+        "name": "",
+        "statusCode": "",
+        "headers": {},
+        "x": 850,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "2a84f37e77d777f8",
+        "type": "json",
+        "z": "a76e4cb80f3bceb8",
+        "name": "",
+        "property": "payload",
+        "action": "obj",
+        "pretty": false,
+        "x": 330,
+        "y": 240,
+        "wires": [
+            [
+                "b073782377aba47e"
+            ]
+        ]
+    },
+    {
+        "id": "b073782377aba47e",
+        "type": "function",
+        "z": "a76e4cb80f3bceb8",
+        "name": "function 1",
+        "func": "// Cek apakah msg.payload adalah objek\nif (typeof msg.payload === 'object') {\n    // Log hanya payload\n    node.log(\"Received payload: \" + JSON.stringify(msg.payload)); // Log data yang diterima\n} else {\n    // Jika bukan objek, log payload secara langsung\n    node.log(\"Received payload is not an object: \" + msg.payload);\n}\n\n// Mengembalikan msg untuk diteruskan ke node Debug\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 240,
+        "wires": [
+            [
+                "aea76074e8801b17",
+                "2b7953c0f712b5af"
+            ]
+        ]
+    }
+]

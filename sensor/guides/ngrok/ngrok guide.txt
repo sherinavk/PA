@@ -1,0 +1,9 @@
+run ngrok di cmd :
+ngrok http http://192.168.40.105:1880
+
+stop ngrok normal :
+ctr + c
+
+stop if running in the background :
+tasklist | findstr ngrok
+

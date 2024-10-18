@@ -2,9 +2,8 @@ const db = require('../config/db');
 const bcrypt = require('bcryptjs');
 
 const User = {
-    create: (email, password, name) => {
+    create: (email, hashedPassword, name) => { // Ubah parameter menjadi hashedPassword
         return new Promise((resolve, reject) => {
-            const hashedPassword = bcrypt.hashSync(password, 10);
             const query = 'INSERT INTO users (email, password, name) VALUES (?, ?, ?)';
             db.query(query, [email, hashedPassword, name], (err, results) => {
                 if (err) return reject(err);

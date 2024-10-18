@@ -1,0 +1,6 @@
+Penjelasan node red :
+1. Pada flow menggunakan node Http in untuk menerima data dari sensor.html.
+2. Menggunakan node JSON untuk mengubah data json string menjadi object sehingga bisa di baca di node debug.
+3. Menggunakan node Function untuk cek apakah ada data pada console.
+4. Menggunakan node debug untuk membaca data dari http in sudah diterima di node red.
+5. menggunakan node http response untuk mengirim data ke express js.

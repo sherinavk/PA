@@ -1,0 +1,12 @@
+install :
+npm install -g node-red
+
+run node red in cmd :
+node-red
+
+access node red in browser :
+1. https://localhost:1880
+2. https://192.168.40.105:1880
+
+stop node red in cmd:
+ctrl + c
