@@ -1,0 +1,107 @@
+/* Menggunakan tag body, bukan .body */
+body {
+  font-family: 'Raleway', sans-serif; 
+  background-color: #f7f4f4;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hero Section */
+.hero-section {
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  color: #fff;
+}
+
+.hero-section .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(0, 0, 0);
+  z-index: 0;
+}
+
+.hero-section h1 {
+  color: #3d2020;
+}
+
+.hero-section h2 {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+.hero-section p {
+  font-size: 1.2rem;
+  color: #3d2020;
+  margin-bottom: 20px;
+}
+
+.hero-section .btn-custom {
+  font-size: 16px;
+  background-color: #007bff;
+  border-radius: 8px;
+  padding: 10px 20px;
+  transition: all 0.3s ease-in-out;
+}
+
+.hero-section .btn-custom:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+/* Service Card */
+.service-card {
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+  background-color: #fff;
+  padding: 20px;
+}
+
+.service-card:hover {
+  transform: translateY(-10px);
+}
+
+.service-card h6 {
+  font-weight: bold;
+  margin-bottom: 16px;
+  font-size: 1.2rem;
+}
+
+.service-card p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+  .hero-section h2 {
+    font-size: 2.5rem;
+  }
+
+  .hero-section p {
+    font-size: 1rem;
+  }
+
+  .hero-section .btn-custom {
+    font-size: 14px;
+    padding: 8px 16px;
+  }
+
+  /* Menyesuaikan card untuk tampilan lebih kecil */
+  .service-card {
+    padding: 15px;
+  }
+
+  .service-card h6 {
+    font-size: 1rem;
+  }
+}

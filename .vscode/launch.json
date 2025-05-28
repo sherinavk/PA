@@ -1,0 +1,24 @@
+{
+    // Gunakan IntelliSense untuk mempelajari atribut yang mungkin digunakan.
+    // Arahkan kursor untuk melihat deskripsi atribut yang ada.
+    // Untuk informasi lebih lanjut, kunjungi: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Jalankan Chrome dengan localhost",
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true, // Mengaktifkan penggunaan source map untuk debugging yang lebih baik
+            "trace": true, // Mengaktifkan logging proses debugging (berguna untuk pemecahan masalah)
+            "smartStep": true, // Melompati kode yang tidak relevan secara otomatis
+            "skipFiles": ["<node_internals>/**"], // Melompati file internal Node.js
+            "runtimeArgs": [
+                "--remote-debugging-port=9222", // Membuka port debugging remote untuk Chrome
+                "--disable-web-security", // Menonaktifkan keamanan web (berguna untuk masalah CORS di development)
+                "--user-data-dir=${workspaceFolder}/.vscode/chrome" // Menggunakan profil Chrome khusus untuk debugging
+            ]
+        }
+    ]
+}

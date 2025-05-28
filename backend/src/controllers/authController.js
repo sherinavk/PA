@@ -1,55 +1,64 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt'); 
+const bcrypt = require('bcrypt');
 
+// Fungsi untuk registrasi
 const register = async (req, res) => {
-    const { email, password, name } = req.body;
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    console.log('Hashed Password:', hashedPassword); // Log untuk melihat hash lengkap
+    const { email, password, username, role } = req.body;  // Mengambil data dari body request
+
+    // Menampilkan data yang diterima dari frontend untuk debugging
+    console.log('Data yang diterima untuk registrasi:', { email, password, username, role });
+
+    const hashedPassword = bcrypt.hashSync(password, 10);  // Meng-hash password
+
     try {
-        await User.create(email, hashedPassword, name);
+        // Memanggil model untuk menyimpan user ke database
+        await User.create(email, hashedPassword, username, role);
         res.status(201).json({ message: 'User registered successfully!' });
     } catch (error) {
         res.status(500).json({ message: 'Registration failed', error: error.message });
     }
 };
 
-
-
+// Fungsi untuk login
 const login = async (req, res) => {
     const { email, password } = req.body;
+
+    // Menampilkan data yang diterima dari frontend untuk debugging
+    console.log('Data yang diterima untuk login:', { email, password });
+
     try {
+        // Mencari user berdasarkan email
         const user = await User.findByEmail(email);
-        console.log('User found:', user); // Log user yang ditemukan
 
         if (!user) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        console.log('Input Password:', password);
-        console.log('Stored Hash Password:', user.password);
-
+        // Mengecek password yang diterima dengan yang ada di database
         const isMatch = bcrypt.compareSync(password, user.password);
-        console.log('Password Match:', isMatch);
 
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
 
-        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        console.log('Token generated:', token); // Log token yang dihasilkan
+        // Membuat JWT token setelah login berhasil
+        const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        // Log sebelum mengirimkan respons ke klien
-        console.log('Response to Client:', { token, user: { id: user.id, name: user.name, email: user.email } });
+        res.json({
+            token,
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+                role: user.role,
+            },
+        });
 
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email } });
+        console.log('Role Admin :', user.role);
     } catch (error) {
         res.status(500).json({ message: 'Login failed', error: error.message });
     }
 };
-
-
-
-
 
 module.exports = { register, login };
