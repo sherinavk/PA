@@ -54,15 +54,24 @@ const Jalan = {
         });
     },
 
-    findById: (id) => {
-        return new Promise((resolve, reject) => {
-            const query = 'SELECT * FROM jalan WHERE id = ?';
-            db.query(query, [id], (error, results) => {
-                if (error) return reject(error);
-                resolve(results[0] || null);
-            });
-        });
-    },
+   findByFilter: (filter) => {
+  return new Promise((resolve, reject) => {
+    let query = '';
+    let params = [];
+
+    if (filter === 'All Road') {
+      query = 'SELECT * FROM jalan WHERE id = 1';
+    } else {
+      query = 'SELECT * FROM jalan WHERE nama_jalan = ?';
+      params.push(filter);
+    }
+
+    db.query(query, params, (error, results) => {
+      if (error) return reject(error);
+      resolve(results);
+    });
+  });
+},
 
     update: (id, data) => {
         return new Promise((resolve, reject) => {

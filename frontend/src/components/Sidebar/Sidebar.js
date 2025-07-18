@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import { useLocation, NavLink } from "react-router-dom";
-
 import { Nav } from "react-bootstrap";
-
-import logo from "assets/img/reactlogo.png";
 
 function Sidebar({ color, image, routes }) {
   const location = useLocation();
@@ -15,7 +12,7 @@ function Sidebar({ color, image, routes }) {
       <div
         className="sidebar-background"
         style={{
-          backgroundImage: "url(" + image + ")"
+         backgroundColor: "#f0f0f0" 
         }}
       />
       <div className="sidebar-wrapper">
@@ -27,7 +24,7 @@ function Sidebar({ color, image, routes }) {
               <img src={require("assets/img/logoroad.png")} alt="..." />
             </div>
           </a>
-          <a className="simple-text" href="http://www.creative-tim.com">
+          <a className="simple-text" >
             ROADAPP
           </a>
         </div>

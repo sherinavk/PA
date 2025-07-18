@@ -1,131 +1,154 @@
-const Sensor = require('../models/Sensor'); // Import model Sensor
+const Sensor = require('../models/Sensor');
+const db = require('../config/db');
 
-// Fungsi untuk menentukan kondisi jalan berdasarkan akselerasi dan gyroscope
-const determineRoadCondition = (acceleration, gyro) => {
-    const accThreshold = 1.5; // Updated threshold for accelerometer
-    const gyroThreshold = 325;
-    const gyroThreshold1 = 326; // Updated threshold for gyroscope
-    const gyroThreshold2 = 327;
-    
-    const accX = acceleration && acceleration.x !== null ? acceleration.x : 0;
-    const accY = acceleration && acceleration.y !== null ? acceleration.y : 0;
-    const accZ = acceleration && acceleration.z !== null ? acceleration.z : 0;
-
-    const gyroAlpha = gyro && gyro.alpha !== null ? gyro.alpha : 0;
-    const gyroBeta = gyro && gyro.beta !== null ? gyro.beta : 0;
-    const gyroGamma = gyro && gyro.gamma !== null ? gyro.gamma : 0;
-
-    // Calculate the maximum absolute values
-    const maxAcc = Math.max(Math.abs(accX), Math.abs(accY), Math.abs(accZ));
-    const maxGyro = Math.max(Math.abs(gyroAlpha), Math.abs(gyroBeta), Math.abs(gyroGamma));
-
-    // Check conditions based on updated thresholds
-    if (
-        maxAcc < accThreshold && 
-        maxGyro < gyroThreshold
-    ) {
-        return 'tidak rusak'; // Not damaged
-    } else if (
-        maxAcc < accThreshold * 2 && 
-        maxGyro < gyroThreshold1
-    ) {
-        return 'rusak ringan'; // Lightly damaged
-    } else if (
-        (maxAcc >= accThreshold * 2 && maxAcc < accThreshold * 3) || 
-        (maxGyro >= gyroThreshold1 && maxGyro < gyroThreshold2)
-    ) {
-        return 'rusak sedang'; // Moderately damaged
-    } else if (
-        maxAcc >= accThreshold * 3 || 
-        maxGyro >= gyroThreshold2
-    ) {
-        return 'rusak berat'; // Heavily damaged
-    } else {
-        console.warn('Unexpected sensor data values:', acceleration, gyro);
-        return 'terjadi kesalahan, cek kembali aliran data'; // Unexpected data
-    }
-};
-
-
-
-// Fungsi untuk menghasilkan kode acak
-const generateRandomCode = (length) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        const randomIndex = Math.floor(Math.random() * characters.length);
-        result += characters[randomIndex];
-    }
-    return result;
-};
-
-exports.receiveSensorData = (req, res) => {
-    const receivedData = req.body;
-
-    console.log("Received sensor data:", receivedData);
-
-    const jalan_id = receivedData.jalan_id || null;
-
-    const acceleration = {
-        x: receivedData.x !== undefined ? receivedData.x : null,
-        y: receivedData.y !== undefined ? receivedData.y : null,
-        z: receivedData.z !== undefined ? receivedData.z : null,
-    };
-
-    const gyro = {
-        alpha: receivedData.alpha_rotation !== undefined ? receivedData.alpha_rotation : null,
-        beta: receivedData.beta_rotation !== undefined ? receivedData.beta_rotation : null,
-        gamma: receivedData.gamma_rotation !== undefined ? receivedData.gamma_rotation : null,
-    };
-
-    console.log("Accelerometer data:", acceleration);
-    console.log("Gyroscope data:", gyro);
-
-    if (
-        (acceleration.x === null && acceleration.y === null && acceleration.z === null) &&
-        (gyro.alpha === null && gyro.beta === null && gyro.gamma === null)
-    ) {
-        return res.status(400).send({ message: "No valid sensor data received." });
-    }
-
-    const condition = determineRoadCondition(acceleration, gyro);
-
-    console.log("Kondisi jalan:", condition);
-
-    const kode_data = generateRandomCode(8);
-    const createdAt = new Date();
-
-    Sensor.create({ kode_data, kondisi: condition, createdAt })
-        .then(insertId => {
-            console.log("Data inserted successfully with ID:", insertId);
-
-            if (jalan_id) {
-                return Sensor.updateRoadCondition(jalan_id, condition, createdAt);
-            } else {
-                console.warn("Jalan ID tidak disertakan, hanya menyimpan data sensor.");
-                return Promise.resolve();
-            }
-        })
-        .then(() => {
-            console.log("Kondisi jalan berhasil diperbarui di tabel jalan");
-            res.send({ message: "Data received and updated successfully!", condition });
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            res.status(500).send({ message: "Error processing data", error: error.message });
-        });
-};
-
-
-
-
-// Function to get all sensor data
-exports.getSensorData = async (req, res) => {
+const sensorController = {
+  // ✅ Simpan data sensor baru
+  storeSensor: async (req, res) => {
     try {
-        const results = await Sensor.getAll(); // Ensure you implement getAll in the Sensor model
-        res.status(200).json(results);
+      const {
+        kode_data,
+        nama_jalan,
+        kondisi,
+        created_at,
+        acceleration_x,
+        acceleration_y,
+        acceleration_z,
+        gyro_x,
+        gyro_y,
+        gyro_z,
+        latitude,
+        longitude
+      } = req.body;
+
+      if (!kode_data || !nama_jalan || !kondisi) {
+        return res.status(400).json({ message: 'kode_data, nama_jalan, dan kondisi wajib diisi.' });
+      }
+
+      const newId = await Sensor.create({
+        kode_data,
+        nama_jalan,
+        kondisi,
+        created_at,
+        acceleration_x,
+        acceleration_y,
+        acceleration_z,
+        gyro_x,
+        gyro_y,
+        gyro_z,
+        latitude,
+        longitude
+      });
+
+      res.status(201).json({ id: newId, message: 'Data sensor berhasil disimpan.' });
     } catch (error) {
-        console.error('Error fetching sensor data:', error);
-        res.status(500).json({ message: 'Internal server error' });
+      console.error('❌ Error storeSensor:', error);
+      res.status(500).json({ error: error.message });
     }
+  },
+
+  // ✅ Ambil semua data sensor
+  getAllSensor: async (req, res) => {
+    try {
+      const sensors = await Sensor.getAll();
+      res.status(200).json(sensors);
+    } catch (error) {
+      console.error('❌ Error getAllSensor:', error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // ✅ Ambil data sensor berdasarkan rentang tanggal
+  getSensorByDateRange: async (req, res) => {
+    try {
+      const { startDate, endDate } = req.query;
+
+      if (!startDate || !endDate) {
+        return res.status(400).json({ message: 'Tanggal mulai dan akhir wajib diisi.' });
+      }
+
+      const results = await Sensor.getByDateRange(startDate, endDate);
+
+      if (!results || results.length === 0) {
+        return res.status(404).json({ message: `Tidak ada data untuk ${startDate} - ${endDate}` });
+      }
+
+      const stats = {
+        noDamage: 0,
+        slightlyDamaged: 0,
+        moderatelyDamaged: 0,
+        badlyDamaged: 0,
+        labels: [`${startDate} - ${endDate}`],
+      };
+
+      results.forEach(sensor => {
+        if (sensor.kondisi === 'tidak_rusak') stats.noDamage++;
+        else if (sensor.kondisi === 'rusak_ringan') stats.slightlyDamaged++;
+        else if (sensor.kondisi === 'rusak_sedang') stats.moderatelyDamaged++;
+        else if (sensor.kondisi === 'rusak_berat') stats.badlyDamaged++;
+      });
+
+      res.status(200).json(stats);
+    } catch (error) {
+      console.error('❌ Error getSensorByDateRange:', error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // ✅ Ambil data sensor berdasarkan ID
+  getSensorById: async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!id) return res.status(400).json({ message: 'ID wajib diisi.' });
+
+      const sensor = await Sensor.getById(id);
+      if (!sensor) return res.status(404).json({ message: 'Data tidak ditemukan.' });
+
+      res.status(200).json(sensor);
+      console.log('📥 getSensorById param id:', id);
+    } catch (error) {
+      console.error('❌ Error getSensorById:', error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // ✅ Update data sensor
+  updateSensor: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { nama_jalan, kondisi } = req.body;
+
+      console.log("🔄 UPDATE jalan dengan ID:", id);
+      console.log("📥 Data diterima:", req.body);
+
+      const success = await Sensor.updateById(id, { nama_jalan, kondisi });
+
+      if (!success) {
+        console.warn("⚠️ Tidak ada baris diupdate (ID salah atau data sama)");
+        return res.status(404).send('Data tidak ditemukan atau tidak ada perubahan');
+      }
+
+      res.status(200).json({ message: '✅ Update berhasil' });
+    } catch (error) {
+      console.error('❌ Error updateSensor:', error);
+      res.status(500).json({ error: error.message });
+    }
+  },
+
+  // ✅ Hapus data sensor
+  deleteSensor: async (req, res) => {
+    try {
+      const { id } = req.params;
+      if (!id) return res.status(400).json({ message: 'ID wajib diisi.' });
+
+      const result = await Sensor.delete(id);
+      if (!result) return res.status(404).json({ message: 'Data tidak ditemukan.' });
+
+      res.status(200).json({ message: 'Data sensor berhasil dihapus.' });
+    } catch (error) {
+      console.error('❌ Error deleteSensor:', error);
+      res.status(500).json({ error: error.message });
+    }
+  },
 };
+
+module.exports = sensorController;

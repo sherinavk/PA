@@ -1,4 +1,4 @@
-const Jalan = require('../models/Jalan');
+const Jalan = require('../models/Sensor');
 
 const jalanController = {
    storeJalan: async (req, res) => {
@@ -68,6 +68,18 @@ const jalanController = {
         }
       },
       
+getRoad: async (req, res) => {
+  try {
+    const filter = req.query.nama_jalan; // ambil dari query param
+    const result = await Jalan.findByFilter(filter);
+    res.json(result);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+},
+
+
 
     updateJalan: async (req, res) => {
         try {

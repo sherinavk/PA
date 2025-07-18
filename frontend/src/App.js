@@ -16,22 +16,21 @@ import 'leaflet/dist/leaflet.css';
 
 function App() {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
-  const role = user?.role;
 
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={LandingPage} />
 
-        {/* Login & Register dengan setUser */}
+        {/* Login & Register */}
         <Route path="/login" render={() => <Login setUser={setUser} />} />
         <Route path="/register" component={Register} />
 
-        {/* Protected Routes */}
+        {/* Admin tetap pakai guard */}
         <Route
           path="/admin"
           render={(props) =>
-            user && role === 0 ? (
+            user && user.role === 0 ? (
               <AdminLayout {...props} />
             ) : (
               <Redirect to={user ? "/user/dashboarduser" : "/login"} />
@@ -39,16 +38,8 @@ function App() {
           }
         />
 
-        <Route
-          path="/user"
-          render={(props) =>
-            user && role === 1 ? (
-              <UserLayout {...props} />
-            ) : (
-              <Redirect to={user ? "/admin/dashboard" : "/login"} />
-            )
-          }
-        />
+        {/* User route tanpa guard */}
+        <Route path="/user" component={UserLayout} />
 
         <Redirect from="*" to="/" />
       </Switch>

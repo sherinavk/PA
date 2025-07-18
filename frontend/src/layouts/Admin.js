@@ -49,7 +49,7 @@ function Admin() {
         <div className="main-panel" ref={mainPanel}>
           <AdminNavbar />
           <div className="content">
-            <Switch>{getRoutes(dashboardRoutes)}</Switch> {/* Menambahkan route maps */}
+            <Switch>{getRoutes(dashboardRoutes)}</Switch>
           </div>
           <Footer />
         </div>

@@ -4,21 +4,34 @@ const bcrypt = require('bcrypt');
 
 // Fungsi untuk registrasi
 const register = async (req, res) => {
-    const { email, password, username, role } = req.body;  // Mengambil data dari body request
+    const { email, username, password, role } = req.body;
 
-    // Menampilkan data yang diterima dari frontend untuk debugging
-    console.log('Data yang diterima untuk registrasi:', { email, password, username, role });
+    console.log('Data yang diterima untuk registrasi:', { email, username, password, role });
 
-    const hashedPassword = bcrypt.hashSync(password, 10);  // Meng-hash password
+    if (!password) {
+        return res.status(400).json({ message: 'Password is required.' });
+    }
 
     try {
-        // Memanggil model untuk menyimpan user ke database
-        await User.create(email, hashedPassword, username, role);
-        res.status(201).json({ message: 'User registered successfully!' });
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Kirim parameter satu per satu sesuai definisi fungsi create
+        const newUser = await User.create(email, hashedPassword, username, role);
+
+        res.status(201).json({
+            message: 'User registered successfully!',
+            user: newUser,
+        });
     } catch (error) {
-        res.status(500).json({ message: 'Registration failed', error: error.message });
+        console.error('Error during registration:', error);
+        res.status(500).json({
+            message: 'Registration failed',
+            error: error.message,
+        });
     }
 };
+
+
 
 // Fungsi untuk login
 const login = async (req, res) => {
@@ -52,6 +65,9 @@ const login = async (req, res) => {
                 email: user.email,
                 username: user.username,
                 role: user.role,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                photo: user.photo
             },
         });
 

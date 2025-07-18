@@ -11,11 +11,11 @@ function SidebarUser({ color, image, routes }) {
     return location.pathname.indexOf(routeName) > -1 ? "active" : "";
   };
   return (
-    <div className="sidebar" data-image={image} data-color={color}>
+     <div className="sidebar" data-image={image} data-color={color}>
       <div
         className="sidebar-background"
         style={{
-          backgroundImage: "url(" + image + ")"
+         backgroundColor: "#f0f0f0" 
         }}
       />
       <div className="sidebar-wrapper">
@@ -27,7 +27,7 @@ function SidebarUser({ color, image, routes }) {
               <img src={require("assets/img/logoroad.png")} alt="..." />
             </div>
           </a>
-          <a className="simple-text" href="http://www.creative-tim.com">
+          <a className="simple-text" href="">
             ROADAPP
           </a>
         </div>

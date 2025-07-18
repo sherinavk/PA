@@ -3,7 +3,6 @@ import DashboardUser from "views/DashboardUser.js";
 import UserProfile from "views/UserProfile.js";
 import DaftarJalan from "views/DaftarJalan.js";
 import DaftarJalanUser from "views/DaftarJalanUser.js";
-import TambahJalan from "views/TambahJalan.js";
 import UpdateJalan from "views/UpdateJalan.js";
 import LandingPage from "views/LandingPage.js";
 import Login from "views/login.js";
@@ -29,27 +28,22 @@ const dashboardRoutes = [
   },
   {
     path: "/table",
-    name: "Daftar Jalan",
+    name: "List of Road",
     icon: "nc-icon nc-notes",
     component: DaftarJalan,
     layout: "/admin"
   },
   {
-    path: "/jalan/tambah",  // Route for adding road
-    name: "Tambah Jalan",
-    icon: "nc-icon nc-paper-2",
-    component: TambahJalan,
-    layout: "/admin"
-  },
-  {
     path: "/jalan/update/:id",  // Route for updating road with parameter ID
-    name: "Update Jalan",
+    name: "Update Road",
     icon: "nc-icon nc-paper-2",
     component: UpdateJalan,
     layout: "/admin"
   },
   {
-    path: "/maps", // Menggunakan :id jika Anda ingin menampilkan ID dinamis
+    path: "/maps",
+    name: "Maps" ,
+    icon: "nc-icon nc-pin-3" ,
     component: Maps,
     layout: "/admin" // Atau sesuaikan dengan layout yang sesuai
   }
@@ -64,22 +58,24 @@ const dashboardRoutesUser = [
     component: DashboardUser,
     layout: "/user"
   },
-  {
-    path: "/user",
-    name: "User Profile",
-    icon: "nc-icon nc-circle-09",
-    component: UserProfile,
-    layout: "/user"
-  },
+  // {
+  //   path: "/user",
+  //   name: "User Profile",
+  //   icon: "nc-icon nc-circle-09",
+  //   component: UserProfile,
+  //   layout: "/user"
+  // },
   {
     path: "/table",
-    name: "Daftar Jalan",
+    name: "list of roads",
     icon: "nc-icon nc-notes",
     component: DaftarJalanUser,
     layout: "/user"
   },
   {
     path: "/maps",
+    name: "Maps",
+    icon: "nc-icon nc-pin-3",
     component: Maps,
     layout: "/user" // Atau sesuaikan dengan layout yang sesuai
   }

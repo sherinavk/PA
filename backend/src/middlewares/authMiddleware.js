@@ -12,7 +12,10 @@ const auth = (req, res, next) => {
             id: decoded.id,
             username: decoded.username,
             role: decoded.role,
+
         };
+        console.log("Decoded user:", req.user);
+
         next();
     });
 };
