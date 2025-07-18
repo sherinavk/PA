@@ -38,7 +38,7 @@ function Header() {
       <Navbar bg="light" expand="lg" style={{ borderBottom: '2px solid #e2e2e2', padding: '10px 20px' }}>
         <Container fluid>
           <Navbar.Brand href="/" style={{ fontSize: '24px', fontWeight: 'bold', color: '#333' }}>
-            Safety Road Our Priority
+            Safety Road is Our Priority
           </Navbar.Brand>
 
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
