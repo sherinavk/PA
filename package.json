@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "chartist": "^0.10.1"
+    "chartist": "^0.10.1",
+    "react-scripts": "^5.0.1"
   }
 }
